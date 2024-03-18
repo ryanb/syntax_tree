@@ -25,14 +25,16 @@ module SyntaxTree
                   :trailing_comma,
                   :disable_auto_ternary,
                   :target_ruby_version,
-                  :strip_hash
+                  :strip_hash,
+                  :hash_shorthand
 
       def initialize(
         quote: :default,
         trailing_comma: :default,
         disable_auto_ternary: :default,
         target_ruby_version: :default,
-        strip_hash: :default
+        strip_hash: :default,
+        hash_shorthand: :default
       )
         @quote =
           if quote == :default
@@ -84,6 +86,14 @@ module SyntaxTree
           else
             strip_hash
           end
+
+        @hash_shorthand =
+          if hash_shorthand == :default
+            # This plugin enforces the hash shorthand syntax introduced in Ruby 3.1
+            defined?(HASH_SHORTHAND)
+          else
+            hash_shorthand
+          end
       end
     end
 
@@ -98,11 +108,13 @@ module SyntaxTree
                 :trailing_comma,
                 :disable_auto_ternary,
                 :target_ruby_version,
-                :strip_hash
+                :strip_hash,
+                :hash_shorthand
 
     alias trailing_comma? trailing_comma
     alias disable_auto_ternary? disable_auto_ternary
     alias strip_hash? strip_hash
+    alias hash_shorthand? hash_shorthand
 
     def initialize(source, *args, options: Options.new)
       super(*args)
@@ -116,6 +128,7 @@ module SyntaxTree
       @disable_auto_ternary = options.disable_auto_ternary
       @target_ruby_version = options.target_ruby_version
       @strip_hash = options.strip_hash
+      @hash_shorthand = options.hash_shorthand
     end
 
     def self.format(source, node, base_indentation = 0)

@@ -1555,6 +1555,10 @@ module SyntaxTree
       (q.parent || HashKeyFormatter::Identity.new).format_key(q, key)
       return unless value
 
+      if value.kind_of?(SyntaxTree::VCall) && "#{value.value.value}:" == key.value
+        return
+      end
+
       if key.comments.empty? && AssignFormatting.skip_indent?(value)
         q.text(" ")
         q.format(value)
